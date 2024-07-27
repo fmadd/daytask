@@ -1,0 +1,227 @@
+basePath: /v2
+definitions:
+  getAllTasks.Response:
+    properties:
+      error:
+        type: string
+      quantity:
+        type: integer
+      status:
+        type: string
+      tasks:
+        items:
+          $ref: '#/definitions/storage.Task'
+        type: array
+    type: object
+  getTask.Response:
+    properties:
+      error:
+        type: string
+      quantity:
+        type: integer
+      status:
+        type: string
+      tasks:
+        items:
+          $ref: '#/definitions/storage.Task'
+        type: array
+    type: object
+  save.Request:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      owner:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    required:
+    - date
+    type: object
+  storage.Task:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      owner:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  updateTask.Request:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      owner:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    required:
+    - date
+    type: object
+host: petstore.swagger.io
+info:
+  contact: {}
+  description: It's a simple task planner.
+  title: Daytask API
+  version: "1.0"
+paths:
+  /task:
+    delete:
+      consumes:
+      - application/json
+      description: Delete task
+      parameters:
+      - description: task ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Delete task
+      tags:
+      - task
+    patch:
+      consumes:
+      - application/json
+      description: Update task
+      parameters:
+      - description: updated task
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/updateTask.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Update task
+      tags:
+      - task
+    post:
+      consumes:
+      - application/json
+      description: Save task
+      parameters:
+      - description: user task
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/save.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Save task
+      tags:
+      - task
+  /task/all:
+    get:
+      consumes:
+      - application/json
+      description: Gives tasks for the whole time
+      parameters:
+      - description: owner's login
+        in: body
+        name: owner
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Quantity and Tasks array
+          schema:
+            $ref: '#/definitions/getAllTasks.Response'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get all tasks
+      tags:
+      - task
+  /task/day:
+    get:
+      consumes:
+      - application/json
+      description: Get the day's tasks
+      parameters:
+      - description: owner's login
+        in: body
+        name: owner
+        required: true
+        schema:
+          type: string
+      - description: date
+        in: body
+        name: date
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Quantity and Tasks array
+          schema:
+            $ref: '#/definitions/getTask.Response'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get tasks
+      tags:
+      - task
+swagger: "2.0"

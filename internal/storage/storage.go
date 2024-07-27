@@ -11,7 +11,10 @@ var (
 
 type Task struct {
 	ID          int64    `json:"id"`
-	Title       string `json:"title"`
-	Owner		string `json:"owner"`
-	Date        string `json:"date"`
+	Title       string 	 `json:"title"`
+	Description string 	 `json:"description"`
+	Owner		string 	 `json:"owner"`
+	Date        string 	 `json:"date"`
+	Status 		string 	 `json:"status,omitempty"`	
+	Type 		string 	 `json:"type,omitempty"`
 }

@@ -12,8 +12,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	"daytask/internal/http-server/handlers/url/save"
-	"daytask/internal/http-server/handlers/url/save/mocks"
+	"daytask/internal/http-server/handlers/task/save"
+	"daytask/internal/http-server/handlers/task/save/mocks"
 	"daytask/internal/lib/logger/handlers/slogdiscard"
 )
 

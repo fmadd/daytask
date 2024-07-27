@@ -13,33 +13,49 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type Request struct{
-	Title       string	 `json:"title,omitempty"`
+type Request struct{ 
+	Title       string	 `json:"title"`
+	Description string	 `json:"description"`
 	Owner		string	 `json:"owner"`
 	Date        string	 `json:"date" validate:"required,datetime=2006-01-02"`
+	Status 		string 	 `json:"status,omitempty"`	
+	Type   		string 	 `json:"type,omitempty"`
 }
 
 type Response struct{
-	response.Response
-	Quantity	int		 		 `json:"quantity,omitempty"`
-	Tasks       []storage.Task	 `json:"tasks,omitempty"`		
+	response.Response	
+	ID 			int64	`json:"id"`
 }
 
 //go:generate go run github.com/vektra/mockery/v2@v2.28.2 --name=TASKSaver
 type TASKSaver interface {
-	SaveTask(taskName string, taskOwner string, taskDate string) (int64, error)
+	SaveTask(taskName string, taskDescription string, taskOwner string, taskDate string, taskStatus string, taskType string) (int64, error)
 }
-
+// Save task
+// @Summary      Save task
+// @Description  Save task
+// @Tags         task
+// @Accept       json
+// @Produce      json
+// @Param        task   body      Request  true  "user task"
+// @Success      200
+// @Failure      400  
+// @Failure      404 
+// @Failure      500  
+// @Router       /task [post]
 func New(log *slog.Logger, taskSaver TASKSaver) http.HandlerFunc{
 	return func(w http.ResponseWriter, r *http.Request){
-		const op = "handlers.url.save.New"
+		const op = "handlers.task.save.New"
 
 		log = log.With(
 			slog.String("op", op),
 			slog.String("request_id", middleware.GetReqID(r.Context())),
 		)
 
-		var req Request
+		var req  = Request{
+			Status: "unstarted",
+			Type:   "ordinary",
+		}
 
 		err := render.DecodeJSON(r.Body, &req)
 		if err != nil{
@@ -57,7 +73,7 @@ func New(log *slog.Logger, taskSaver TASKSaver) http.HandlerFunc{
 			return
 		}
 
-		id, err := taskSaver.SaveTask(req.Title, req.Owner, req.Date)
+		id, err := taskSaver.SaveTask(req.Title, req.Description, req.Owner, req.Date, req.Status, req.Type)
 		if errors.Is(err, storage.ErrIncorrectDate){
 			log.Info("incorrect date", slog.String("date", req.Date))
 			render.JSON(w, r,  response.Error("incorrect date"))
@@ -74,6 +90,7 @@ func New(log *slog.Logger, taskSaver TASKSaver) http.HandlerFunc{
 
 		render.JSON(w, r, Response{ 
 			Response: response.OK(),
+			ID: id,
 		})
 	}
 }
