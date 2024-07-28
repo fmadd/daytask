@@ -37,24 +37,7 @@ func New(storagePath string) (*Storage, error) {
 	
 	}
 	_, err = stmt.Exec()
-
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	stmt, err = db.Prepare(  
-		`CREATE TABLE IF NOT EXISTS users(
-		id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-		username TEXT NOT NULL,
-		password TEXT NOT NULL);
-		`)
-
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
 	
-	}
-	_, err = stmt.Exec()
-
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
